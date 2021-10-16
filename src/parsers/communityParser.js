@@ -61,6 +61,8 @@ exports.communityParser = async ({ requestQueue, request, page }) => {
     page,
   });
 
+  console.log("Parsing Community...");
+
   if (error) {
     return;
   }
