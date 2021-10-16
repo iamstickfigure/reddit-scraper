@@ -39,25 +39,55 @@ exports.communityCategoryParser = async ({
   while (loading) {
     await Apify.utils.puppeteer.infiniteScroll(page, { timeoutSecs: 1 });
 
-    posts = await page.$$eval("div.Post", (divs) =>
+    await new Promise(res => setTimeout(res, 5000));
+
+    posts = await page.$$eval("div.Post", (divs) => 
       divs.map((el) => {
         const numberOfVotes = $(el).find("[id^=vote-arrows] div").html();
         const postedBy = $(el).find('a[href^="/user/"]').html();
         const title = $(el).find("h3").html();
+        const titleExtras = $(el).find("h3").map(function() {
+          return $(this).html();
+        }).toArray();
         const postedDate = $(el).find("a[data-click-id=timestamp]").text();
         const postUrl = $(el).find("a[data-click-id=timestamp]").attr("href");
         const communityName = postUrl
           ? postUrl.match(/reddit\.com\/(.*)\/comments.*/)[1]
           : null;
+          
+        const linkUrl = $(el).find("a.styled-outbound-link").attr("href");
+        const videoUrl = $(el).find("video source").attr("src");
+        const mainImg = $(el).find("img.ImageBox-image");
+        const images = [];
 
-        return {
+        if(mainImg.length > 0) {
+          images.push({
+            url: mainImg.attr("src"),
+            alt: mainImg.attr("alt")
+          });
+        }
+
+        $(el).find("figure img").each(function() {
+          images.push({
+            url: $(this).attr("src"),
+            alt: $(this).attr("alt")
+          });
+        });
+
+        const postData = {
           postUrl,
+          linkUrl,
+          videoUrl,
+          images,
           numberOfVotes,
           communityName,
           postedBy,
           postedDate,
           title,
+          titleExtras
         };
+
+        return postData;
       })
     );
 

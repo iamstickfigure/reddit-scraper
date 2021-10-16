@@ -61,9 +61,9 @@ Apify.main(async () => {
     }
   }
 
-  const proxyConfiguration = await createProxyWithValidation({
-    proxyConfig: proxy,
-  });
+  // const proxyConfiguration = await createProxyWithValidation({
+  //   proxyConfig: proxy,
+  // });
 
   const preNavigationHooks = [
     async (crawlingContext) => {
@@ -76,8 +76,20 @@ Apify.main(async () => {
     requestQueue,
     useSessionPool: true,
     persistCookiesPerSession: true,
-    proxyConfiguration,
+    // proxyConfiguration,
     preNavigationHooks,
+    maxRequestsPerCrawl: 10,
+    launchContext: {
+        useChrome: true,
+        stealth: true,
+        launchOptions: {
+            headless: false,
+        },
+        // You can override default stealth options
+        // stealthOptions: {
+        //     addLanguage: false,
+        // },
+    },
 
     handlePageFunction: async (context) => {
       const { page, request } = context;

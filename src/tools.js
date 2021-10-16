@@ -211,7 +211,9 @@ exports.hasReachedMaxItemsLimit = ({ maxItems }) => {
 
 exports.defaultInput = {
   proxy: "",
-  startUrls: [],
+  startUrls: [
+    "https://www.reddit.com/r/techsupportgore/"
+  ],
   searches: [],
   extendOutputFunction: "",
   maxItems: 50,
